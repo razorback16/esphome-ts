@@ -6,6 +6,7 @@ export * from './entities';
 export * from './helpers';
 export * from './interfaces';
 export * from './light';
+export * from './fan';
 export * from './sensor';
 export * from './states';
 export * from './switch';

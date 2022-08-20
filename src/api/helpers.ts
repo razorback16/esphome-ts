@@ -3,8 +3,10 @@ import {
     BinarySensorStateResponse,
     CoverStateResponse,
     LightStateResponse,
+    FanStateResponse,
     ListEntitiesBinarySensorResponse,
     ListEntitiesLightResponse,
+    ListEntitiesFanResponse,
     ListEntitiesSensorResponse,
     ListEntitiesSwitchResponse,
     SensorStateResponse,
@@ -17,6 +19,7 @@ import { CommandInterface } from '../components';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { BaseComponent, BinarySensorComponent, LightComponent, SensorComponent, SwitchComponent } from '..';
+import { FanComponent } from '../components/fan';
 
 export const stateParser = (data: ReadData): StateResponses | undefined => {
     switch (data.type) {
@@ -83,6 +86,19 @@ export const createComponents = (
                 : {
                       id: response.objectId,
                       component: new LightComponent(response, state$, connection),
+                  };
+        }
+        case MessageTypes.ListEntitiesFanResponse: {
+            const response: ListEntitiesFanResponse = decode(ListEntitiesFanResponse, data);
+            const state$ = transformStates<FanStateResponse>(stateEvents$, response);
+            return knownComponents.has(response.objectId)
+                ? {
+                      id: response.objectId,
+                      state$,
+                  }
+                : {
+                      id: response.objectId,
+                      component: new FanComponent(response, state$, connection),
                   };
         }
         case MessageTypes.ListEntitiesSensorResponse: {
